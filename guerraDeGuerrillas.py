@@ -27,24 +27,24 @@ def getAttackUnities0():
 
 def  getAttackUnitiesN(attackUnities,seed, maxAttackStrength = 10000, umbralV = 0.01):
         np.random.seed(seed)
-        labeli = getAttackUnity(attackUnities, maxAttackStrength)
+        labeli = getAttackUnity(attackUnities,seed +1 , maxAttackStrength)
         probabilityV = np.random.rand()
-        if(labeli == 1 or probabilityV <= umbralV):
-                labelj = getAttackUnity(attackUnities, maxAttackStrength)
+        if(labeli == 1 or (probabilityV > umbralV and labeli != maxAttackStrength)):
+                labelj = getAttackUnity(attackUnities,seed+2, maxAttackStrength)
                 
-                while labelj == labeli:
-                        labelj = getAttackUnity(attackUnities, maxAttackStrength)
+                while labelj + labeli> maxAttackStrength:
+                        labelj = getAttackUnity(attackUnities,seed+2, maxAttackStrength)
 
                 attackUnities = fusionAttackUnity(labeli, labelj, attackUnities)
-        elif(probabilityV > umbralV or labeli == maxAttackStrength):
+        elif((probabilityV <= umbralV and labeli != 1) or labeli == maxAttackStrength):
                 attackUnities = fissionAttackUnity(labeli, attackUnities)
 
         return attackUnities
 
                 
 
-def getAttackUnity(attackUnities, maxAttackStrength = 10000):
-        #np.random.seed(seed)
+def getAttackUnity(attackUnities, seed,maxAttackStrength = 10000):
+        np.random.seed(seed)
         labelsAttackUnities = np.array(list(attackUnities.keys()))
         probablityP = np.random.rand()*maxAttackStrength
         rightVal = 0
@@ -59,7 +59,6 @@ def getAttackUnity(attackUnities, maxAttackStrength = 10000):
 
 
 def fusionAttackUnity(labeli, labelj, attackUnities):
-        print("fusionAttackUnity", labeli, labelj)
         if(attackUnities[labeli] == labeli):
                 attackUnities.pop(labeli)
         else:
@@ -90,7 +89,11 @@ def fissionAttackUnity(label, attackUnities):
 
         return attackUnities
 
-print(getAttackUnities0()[0])
-for i in range(100):
-        print(i, getAttackUnitiesN(getAttackUnities0()[0],i,umbralV = 0.5))
+#print(getAttackUnities0()[0])
+#attactUnities = getAttackUnitiesN({10000:10000},1,umbralV = 0.01)
+#print(attactUnities)
+#for i in range(10000):
+#        attactUnities = getAttackUnitiesN(attactUnities,1,umbralV = 0.01)
+#        print(i,attactUnities)
 
+attactUnities = getAttackUnitiesN({1: 4359, 1491: 1491, 1821: 1821, 2329: 2329},1,umbralV = 0.01)
