@@ -28,10 +28,11 @@ def getAttackUnities0():
 def  getAttackUnitiesN(attackUnities,seed, maxAttackStrength = 10000, umbralV = 0.01):
         np.random.seed(seed)
         labeli = getAttackUnity(attackUnities,seed +1 , maxAttackStrength)
+        attackUnities = deleteAttackUnity(labeli, attackUnities)
         probabilityV = np.random.rand()
         if(labeli == 1 or (probabilityV > umbralV and labeli != maxAttackStrength)):
                 labelj = getAttackUnity(attackUnities,seed+2, maxAttackStrength)
-                
+                attackUnities = deleteAttackUnity(labelj, attackUnities)
                 while labelj + labeli> maxAttackStrength:
                         labelj = getAttackUnity(attackUnities,seed+2, maxAttackStrength)
 
@@ -48,27 +49,20 @@ def getAttackUnity(attackUnities, seed,maxAttackStrength = 10000):
         labelsAttackUnities = np.array(list(attackUnities.keys()))
         probablityP = np.random.rand()*maxAttackStrength
         rightVal = 0
-        for i in range(len(labelsAttackUnities)):
-                #labela = labelsAttackUnities[i-1] if i-1>=0  else 0
-                label = labelsAttackUnities[i]
-                leftVal = rightVal
-                rightVal = attackUnities[label] + leftVal
-                if (probablityP < rightVal) and probablityP >= leftVal:
-                        return label
+        if(len(labelsAttackUnities) > 1):
+                for i in range(len(labelsAttackUnities)):
+                        #labela = labelsAttackUnities[i-1] if i-1>=0  else 0
+                        label = labelsAttackUnities[i]
+                        leftVal = rightVal
+                        rightVal = attackUnities[label] + leftVal
+                        if (probablityP < rightVal) and probablityP >= leftVal:
+                                return label
+        else:
+                return labelsAttackUnities[0]
 
 
 
 def fusionAttackUnity(labeli, labelj, attackUnities):
-        if(attackUnities[labeli] == labeli):
-                attackUnities.pop(labeli)
-        else:
-                attackUnities[labeli] -= labeli
-
-        if(attackUnities[labelj] == labelj):
-                attackUnities.pop(labelj)
-        else:
-                attackUnities[labelj] -= labelj
-
         if(attackUnities.get(labeli+labelj) == None):
                 attackUnities[labeli+labelj] = labeli+labelj
         else:
@@ -77,11 +71,6 @@ def fusionAttackUnity(labeli, labelj, attackUnities):
         return attackUnities
 
 def fissionAttackUnity(label, attackUnities):
-        if(attackUnities[label] == label):
-                attackUnities.pop(label)
-        else:
-                attackUnities[label] -= label
-
         if(attackUnities.get(1) == None):
                 attackUnities[1] = label
         else:
@@ -89,11 +78,20 @@ def fissionAttackUnity(label, attackUnities):
 
         return attackUnities
 
+def deleteAttackUnity(label, attackUnities):
+        if(attackUnities[label] == label):
+                attackUnities.pop(label)
+        else:
+                attackUnities[label] -= label
+
+        return attackUnities
+
 #print(getAttackUnities0()[0])
 #attactUnities = getAttackUnitiesN({10000:10000},1,umbralV = 0.01)
 #print(attactUnities)
 #for i in range(10000):
-#        attactUnities = getAttackUnitiesN(attactUnities,1,umbralV = 0.01)
+#        attactUnities = getAttackUnitiesN(attactUnities,i,umbralV = 0.01)
 #        print(i,attactUnities)
 
-attactUnities = getAttackUnitiesN({1: 4359, 1491: 1491, 1821: 1821, 2329: 2329},1,umbralV = 0.01)
+attactUnities = getAttackUnitiesN({1: 4339, 2: 1642, 3: 996, 4: 456, 5: 400, 6: 306, 7: 259, 8: 176, 9: 90, 13: 65, 10: 100, 14: 56, 11: 132, 17: 34, 12: 24, 16: 112, 18: 90, 20: 40, 23: 69, 15: 45, 33: 99, 26: 26, 21: 21, 24: 24, 31: 31, 19: 38, 90: 90, 50: 50, 45: 45, 46: 46, 35: 35, 39: 39, 25: 25} ,4167,umbralV = 0.01)
+#print(attactUnities)
